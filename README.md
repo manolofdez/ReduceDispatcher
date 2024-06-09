@@ -7,9 +7,9 @@ TCA is awesome! State management, testability, what's not to like!? That said, I
 myself a bit lost with all the enum cases, specifically in the Reducer's body. And while we can 
 always split reducers up, sometimes there isn't a clean way of divvying up its responsibilities evenly.
 
-Maybe it's the extra indentation? I don't know. To get to the bottom of this, we need a way to play around 
-with some ideas...For example, what if we could _hide_ the Reduce's switch statement while retaining all 
-the pieces and concepts of TCA?
+But what is it? Is it the extra indentation? I don't know. To get to the bottom of this, we need to play 
+around with some ideas...For example, what if we could _hide_ the Reduce's switch statement while retaining 
+all the pieces and concepts of TCA?
 
 This `ReduceDispatcher` project explores how it feels to replace switch cases with function calls.
 
