@@ -73,7 +73,7 @@ struct MyReducer {
 }
 
 extension MyReducer: MyReducerActionDelegate {
-    func reduceDidAppear(into state: inout State) -> Effect<Action> {
+    func didAppear(state: inout State) -> Effect<Action> {
         print("foo")
         return .none
     }
