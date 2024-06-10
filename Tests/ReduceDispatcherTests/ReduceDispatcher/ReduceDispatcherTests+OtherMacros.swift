@@ -44,7 +44,7 @@ extension ParentReducerTests {
                     func reduce(into state: inout State, action: Action) -> Effect<Action> {
                         switch action {
                         case .didAppear:
-                            return actionDelegate.reduceDidAppear(into: &state)
+                            return actionDelegate.didAppear(state: &state)
                         }
                     }
                 }
@@ -54,7 +54,7 @@ extension ParentReducerTests {
                 typealias State = ParentReducer.State
                 typealias Action = ParentReducer.Action
 
-                func reduceDidAppear(into state: inout State) -> Effect<Action>
+                func didAppear(state: inout State) -> Effect<Action>
             }
             """
         }
@@ -97,7 +97,7 @@ extension ParentReducerTests {
                     func reduce(into state: inout State, action: Action) -> Effect<Action> {
                         switch action {
                         case .didAppear:
-                            return actionDelegate.reduceDidAppear(into: &state)
+                            return actionDelegate.didAppear(state: &state)
                         }
                     }
                 }
@@ -107,7 +107,7 @@ extension ParentReducerTests {
                 typealias State = ParentReducer.State
                 typealias Action = ParentReducer.Action
 
-                func reduceDidAppear(into state: inout State) -> Effect<Action>
+                func didAppear(state: inout State) -> Effect<Action>
             }
             """
         }
@@ -150,7 +150,7 @@ extension ParentReducerTests {
                     func reduce(into state: inout State, action: Action) -> Effect<Action> {
                         switch action {
                         case .didAppear:
-                            return actionDelegate.reduceDidAppear(into: &state)
+                            return actionDelegate.didAppear(state: &state)
                         }
                     }
                 }
@@ -160,7 +160,7 @@ extension ParentReducerTests {
                 typealias State = ParentReducer.State
                 typealias Action = ParentReducer.Action
 
-                func reduceDidAppear(into state: inout State) -> Effect<Action>
+                func didAppear(state: inout State) -> Effect<Action>
             }
             """
         }

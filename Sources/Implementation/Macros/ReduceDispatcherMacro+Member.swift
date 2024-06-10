@@ -59,17 +59,17 @@ extension ReduceDispatcherMacro: MemberMacro {
         } ?? []
         
         let enumCaseName = enumCase.name.text
-        let functionName = "actionDelegate.reduce\(enumCaseName.uppercasingFirst())"
+        let functionName = "actionDelegate.\(enumCaseName)"
         
         guard parameterNames.count > 0 else {
-            return "case .\(enumCaseName):  return \(functionName)(into: &state)"
+            return "case .\(enumCaseName):  return \(functionName)(state: &state)"
         }
         
         var functionParameters: [String] = try enumCase.parameterClause?.parameters.compactMap { enumCaseParameter in
             let parameterName = try MacroUtilities.extractName(from: enumCaseParameter)
             return enumCaseParameter.firstName == nil ? parameterName : "\(parameterName): \(parameterName)"
         } ?? []
-        functionParameters.append("into: &state")
+        functionParameters.append("state: &state")
         
         return """
                case let .\(enumCase.name.text)(\(parameterNames.joined(separator: ", "))):

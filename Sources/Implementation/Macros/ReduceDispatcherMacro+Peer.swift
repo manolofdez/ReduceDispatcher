@@ -56,9 +56,9 @@ extension ReduceDispatcherMacro: PeerMacro {
         var parameters = try enumCase.parameterClause?.parameters.compactMap { enumCaseParameter in
             try extractParameter(from: enumCaseParameter)
         } ?? []
-        parameters.append("into state: inout State")
+        parameters.append("state: inout State")
         
-        let functionName = "reduce\(enumCase.name.text.uppercasingFirst())"
+        let functionName = enumCase.name.text
         return "func \(functionName)(\(parameters.joined(separator: ", "))) -> Effect<Action>"
     }
     

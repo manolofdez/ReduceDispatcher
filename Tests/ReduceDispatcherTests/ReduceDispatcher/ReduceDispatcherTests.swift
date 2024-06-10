@@ -57,7 +57,7 @@ final class ParentReducerTests: XCTestCase {
                     func reduce(into state: inout State, action: Action) -> Effect<Action> {
                         switch action {
                         case let .child(action):
-                            return actionDelegate.reduceChild(action, into: &state)
+                            return actionDelegate.child(action, state: &state)
                         }
                     }
                 }
@@ -67,7 +67,7 @@ final class ParentReducerTests: XCTestCase {
                 typealias State = ParentReducer.State
                 typealias Action = ParentReducer.Action
 
-                func reduceChild(_ action: ChildReducer.Action, into state: inout State) -> Effect<Action>
+                func child(_ action: ChildReducer.Action, state: inout State) -> Effect<Action>
             }
             """
         }
@@ -108,7 +108,7 @@ final class ParentReducerTests: XCTestCase {
                     func reduce(into state: inout State, action: Action) -> Effect<Action> {
                         switch action {
                         case let .child(action):
-                            return actionDelegate.reduceChild(action, into: &state)
+                            return actionDelegate.child(action, state: &state)
                         }
                     }
                 }
@@ -118,7 +118,7 @@ final class ParentReducerTests: XCTestCase {
                 typealias State = ParentReducer.State
                 typealias Action = ParentReducer.Action
 
-                func reduceChild(_ action: ChildReducer.Action, into state: inout State) -> Effect<Action>
+                func child(_ action: ChildReducer.Action, state: inout State) -> Effect<Action>
             }
             """
         }

@@ -24,19 +24,19 @@ struct ParentReducer {
 }
 
 extension ParentReducer: ParentReducerActionDelegate {
-    func reduceChild(_ action: ChildReducer.Action, into state: inout State) -> Effect<Action> {
+    func child(_ action: ChildReducer.Action, state: inout State) -> Effect<Action> {
         .none
     }
     
-    func reduceDidAppear(into state: inout State) -> Effect<Action> {
+    func didAppear(state: inout State) -> Effect<Action> {
         .none
     }
     
-    func reduceEnterBackground(into state: inout State) -> Effect<Action> {
+    func enterBackground(state: inout State) -> Effect<Action> {
         .none
     }
     
-    func reduceUpdateText(_ string: String, animated: Bool, into state: inout State) -> Effect<Action> {
+    func updateText(_ string: String, animated: Bool, state: inout State) -> Effect<Action> {
         .none
     }
 }

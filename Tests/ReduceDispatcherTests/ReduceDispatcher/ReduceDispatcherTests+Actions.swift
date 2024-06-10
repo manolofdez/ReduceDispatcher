@@ -42,7 +42,7 @@ extension ParentReducerTests {
                     func reduce(into state: inout State, action: Action) -> Effect<Action> {
                         switch action {
                         case .didAppear:
-                            return actionDelegate.reduceDidAppear(into: &state)
+                            return actionDelegate.didAppear(state: &state)
                         }
                     }
                 }
@@ -52,7 +52,7 @@ extension ParentReducerTests {
                 typealias State = ParentReducer.State
                 typealias Action = ParentReducer.Action
 
-                func reduceDidAppear(into state: inout State) -> Effect<Action>
+                func didAppear(state: inout State) -> Effect<Action>
             }
             """
         }
@@ -93,7 +93,7 @@ extension ParentReducerTests {
                     func reduce(into state: inout State, action: Action) -> Effect<Action> {
                         switch action {
                         case let .child(action):
-                            return actionDelegate.reduceChild(action, into: &state)
+                            return actionDelegate.child(action, state: &state)
                         }
                     }
                 }
@@ -103,7 +103,7 @@ extension ParentReducerTests {
                 typealias State = ParentReducer.State
                 typealias Action = ParentReducer.Action
 
-                func reduceChild(_ action: ChildReducer.Action, into state: inout State) -> Effect<Action>
+                func child(_ action: ChildReducer.Action, state: inout State) -> Effect<Action>
             }
             """
         }
@@ -144,7 +144,7 @@ extension ParentReducerTests {
                     func reduce(into state: inout State, action: Action) -> Effect<Action> {
                         switch action {
                         case let .didFinish(result):
-                            return actionDelegate.reduceDidFinish(result, into: &state)
+                            return actionDelegate.didFinish(result, state: &state)
                         }
                     }
                 }
@@ -154,7 +154,7 @@ extension ParentReducerTests {
                 typealias State = ParentReducer.State
                 typealias Action = ParentReducer.Action
 
-                func reduceDidFinish(_ result: Result<String, Error>, into state: inout State) -> Effect<Action>
+                func didFinish(_ result: Result<String, Error>, state: inout State) -> Effect<Action>
             }
             """
         }
@@ -195,7 +195,7 @@ extension ParentReducerTests {
                     func reduce(into state: inout State, action: Action) -> Effect<Action> {
                         switch action {
                         case let .child(id, action):
-                            return actionDelegate.reduceChild(id: id, action: action, into: &state)
+                            return actionDelegate.child(id: id, action: action, state: &state)
                         }
                     }
                 }
@@ -205,7 +205,7 @@ extension ParentReducerTests {
                 typealias State = ParentReducer.State
                 typealias Action = ParentReducer.Action
 
-                func reduceChild(id: UUID, action: ChildReducer.Action, into state: inout State) -> Effect<Action>
+                func child(id: UUID, action: ChildReducer.Action, state: inout State) -> Effect<Action>
             }
             """
         }
@@ -246,7 +246,7 @@ extension ParentReducerTests {
                     func reduce(into state: inout State, action: Action) -> Effect<Action> {
                         switch action {
                         case let .child(uUID, action):
-                            return actionDelegate.reduceChild(uUID, action: action, into: &state)
+                            return actionDelegate.child(uUID, action: action, state: &state)
                         }
                     }
                 }
@@ -256,7 +256,7 @@ extension ParentReducerTests {
                 typealias State = ParentReducer.State
                 typealias Action = ParentReducer.Action
 
-                func reduceChild(_ uUID: UUID, action: ChildReducer.Action, into state: inout State) -> Effect<Action>
+                func child(_ uUID: UUID, action: ChildReducer.Action, state: inout State) -> Effect<Action>
             }
             """
         }
@@ -303,13 +303,13 @@ extension ParentReducerTests {
                     func reduce(into state: inout State, action: Action) -> Effect<Action> {
                         switch action {
                         case let .child(action):
-                            return actionDelegate.reduceChild(action, into: &state)
+                            return actionDelegate.child(action, state: &state)
                         case .didAppear:
-                            return actionDelegate.reduceDidAppear(into: &state)
+                            return actionDelegate.didAppear(state: &state)
                         case .enterBackground:
-                            return actionDelegate.reduceEnterBackground(into: &state)
+                            return actionDelegate.enterBackground(state: &state)
                         case let .updateText(string, animated):
-                            return actionDelegate.reduceUpdateText(string, animated: animated, into: &state)
+                            return actionDelegate.updateText(string, animated: animated, state: &state)
                         }
                     }
                 }
@@ -319,10 +319,10 @@ extension ParentReducerTests {
                 typealias State = ParentReducer.State
                 typealias Action = ParentReducer.Action
 
-                func reduceChild(_ action: ChildReducer.Action, into state: inout State) -> Effect<Action>
-                func reduceDidAppear(into state: inout State) -> Effect<Action>
-                func reduceEnterBackground(into state: inout State) -> Effect<Action>
-                func reduceUpdateText(_ string: String, animated: Bool, into state: inout State) -> Effect<Action>
+                func child(_ action: ChildReducer.Action, state: inout State) -> Effect<Action>
+                func didAppear(state: inout State) -> Effect<Action>
+                func enterBackground(state: inout State) -> Effect<Action>
+                func updateText(_ string: String, animated: Bool, state: inout State) -> Effect<Action>
             }
             """
         }

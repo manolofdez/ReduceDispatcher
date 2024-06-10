@@ -48,17 +48,17 @@ fileprivate struct TestReducer: Reducer, TestReducerActionDelegate {
         Dispatch(self)
     }
     
-    func reduceDidStartTest(into state: inout State) -> Effect<Action> {
+    func didStartTest(state: inout State) -> Effect<Action> {
         state.functionCalled.append("reduceDidStartTest")
         return .none
     }
     
-    func reduceSendTestEffect(into state: inout State) -> Effect<Action> {
+    func sendTestEffect(state: inout State) -> Effect<Action> {
         state.functionCalled.append("sendTestEffect")
         return .send(.testEffect)
     }
     
-    func reduceTestEffect(into state: inout State) -> Effect<Action> {
+    func testEffect(state: inout State) -> Effect<Action> {
         state.functionCalled.append("testEffect")
         return .none
     }
