@@ -62,7 +62,7 @@ extension ReduceDispatcherMacro: MemberMacro {
         let functionName = "actionDelegate.reduce\(enumCaseName.uppercasingFirst())"
         
         guard parameterNames.count > 0 else {
-            return "case .\(enumCaseName):  \(functionName)(into: &state)"
+            return "case .\(enumCaseName):  return \(functionName)(into: &state)"
         }
         
         var functionParameters: [String] = try enumCase.parameterClause?.parameters.compactMap { enumCaseParameter in
@@ -73,7 +73,7 @@ extension ReduceDispatcherMacro: MemberMacro {
         
         return """
                case let .\(enumCase.name.text)(\(parameterNames.joined(separator: ", "))):
-               \(functionName)(\(functionParameters.joined(separator: ", ")))
+               return \(functionName)(\(functionParameters.joined(separator: ", ")))
                """
     }
 }

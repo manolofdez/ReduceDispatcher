@@ -42,7 +42,7 @@ extension ParentReducerTests {
                     func reduce(into state: inout State, action: Action) -> Effect<Action> {
                         switch action {
                         case .didAppear:
-                            actionDelegate.reduceDidAppear(into: &state)
+                            return actionDelegate.reduceDidAppear(into: &state)
                         }
                     }
                 }
@@ -93,7 +93,7 @@ extension ParentReducerTests {
                     func reduce(into state: inout State, action: Action) -> Effect<Action> {
                         switch action {
                         case let .child(action):
-                            actionDelegate.reduceChild(action, into: &state)
+                            return actionDelegate.reduceChild(action, into: &state)
                         }
                     }
                 }
@@ -144,7 +144,7 @@ extension ParentReducerTests {
                     func reduce(into state: inout State, action: Action) -> Effect<Action> {
                         switch action {
                         case let .didFinish(result):
-                            actionDelegate.reduceDidFinish(result, into: &state)
+                            return actionDelegate.reduceDidFinish(result, into: &state)
                         }
                     }
                 }
@@ -195,7 +195,7 @@ extension ParentReducerTests {
                     func reduce(into state: inout State, action: Action) -> Effect<Action> {
                         switch action {
                         case let .child(id, action):
-                            actionDelegate.reduceChild(id: id, action: action, into: &state)
+                            return actionDelegate.reduceChild(id: id, action: action, into: &state)
                         }
                     }
                 }
@@ -246,7 +246,7 @@ extension ParentReducerTests {
                     func reduce(into state: inout State, action: Action) -> Effect<Action> {
                         switch action {
                         case let .child(uUID, action):
-                            actionDelegate.reduceChild(uUID, action: action, into: &state)
+                            return actionDelegate.reduceChild(uUID, action: action, into: &state)
                         }
                     }
                 }
@@ -303,13 +303,13 @@ extension ParentReducerTests {
                     func reduce(into state: inout State, action: Action) -> Effect<Action> {
                         switch action {
                         case let .child(action):
-                            actionDelegate.reduceChild(action, into: &state)
+                            return actionDelegate.reduceChild(action, into: &state)
                         case .didAppear:
-                            actionDelegate.reduceDidAppear(into: &state)
+                            return actionDelegate.reduceDidAppear(into: &state)
                         case .enterBackground:
-                            actionDelegate.reduceEnterBackground(into: &state)
+                            return actionDelegate.reduceEnterBackground(into: &state)
                         case let .updateText(string, animated):
-                            actionDelegate.reduceUpdateText(string, animated: animated, into: &state)
+                            return actionDelegate.reduceUpdateText(string, animated: animated, into: &state)
                         }
                     }
                 }
