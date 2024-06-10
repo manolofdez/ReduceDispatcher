@@ -49,6 +49,7 @@ let package = Package(
             name: "ReduceDispatcherTests",
             dependencies: [
                 "ReduceDispatcherImplementation",
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
                 .product(name: "SwiftSyntaxMacrosTestSupport", package: "swift-syntax"),
                 .product(name: "MacroTesting", package: "swift-macro-testing")
             ]
