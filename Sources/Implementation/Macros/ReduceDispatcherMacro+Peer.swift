@@ -6,6 +6,10 @@ import SwiftSyntaxMacros
 import SwiftSyntaxMacroExpansion
 
 extension ReduceDispatcherMacro: PeerMacro {
+    private enum Visibility: String {
+        case `private`, `fileprivate`, `internal`
+    }
+    
     public static func expansion(
         of node: SwiftSyntax.AttributeSyntax,
         providingPeersOf declaration: some DeclSyntaxProtocol,
@@ -41,7 +45,9 @@ extension ReduceDispatcherMacro: PeerMacro {
             return []
         }
         
-        return [protocolDeclaration(name: name, functions: functions)]
+        let visibility = protocolVisibility(for: declaration)
+        let visibilityString = visibility == .internal ? "" : "\(visibility.rawValue) "
+        return [protocolDeclaration(name: name, visibility: visibilityString, functions: functions)]
     }
     
     private static func extractFunctionSignature(from enumMember: MemberBlockItemListSyntax.Element) throws -> String? {
@@ -63,14 +69,27 @@ extension ReduceDispatcherMacro: PeerMacro {
         return "\(parameterPrefix)\(parameterName): \(enumCaseParameter.type.trimmedDescription)"
     }
     
-    private static func protocolDeclaration(name: String, functions: [String]) -> DeclSyntax {
+    private static func protocolDeclaration(name: String, visibility: String, functions: [String]) -> DeclSyntax {
         """
-        protocol \(raw: name)ActionDelegate {
+        \(raw: visibility)protocol \(raw: name)ActionDelegate {
             typealias State = \(raw: name).State
             typealias Action = \(raw: name).Action
 
             \(raw: functions.joined(separator: "\n"))
         }
         """
+    }
+    
+    private static func protocolVisibility(for declaration: StructDeclSyntax) -> Visibility {
+        for modifier in declaration.modifiers {
+            if modifier.name.trimmedDescription == "private" {
+                return .private
+            } else if modifier.name.trimmedDescription == "fileprivate" {
+                return .fileprivate
+            } else if modifier.name.trimmedDescription == "internal" {
+                return .internal
+            }
+        }
+        return .internal
     }
 }
