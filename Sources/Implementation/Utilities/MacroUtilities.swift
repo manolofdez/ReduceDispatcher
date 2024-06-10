@@ -31,7 +31,7 @@ struct MacroUtilities {
     }
     
     static func conformsToReducer(declaration: StructDeclSyntax) -> Bool {
-        declaration.inheritanceClause?.inheritedTypes.contains { $0.trimmedDescription == "Reducer" } == true
+        declaration.inheritanceClause?.inheritedTypes.contains { $0.type.trimmedDescription == "Reducer" } == true
             || declaration.attributes.contains { $0.as(AttributeSyntax.self)?.attributeName.trimmedDescription == "Reducer" } == true
     }
 }
