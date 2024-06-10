@@ -5,13 +5,18 @@ macro that generates the boilerplate necessary for routing a Reducer's Actions t
 ## Motivation
 TCA is awesome! State management, testability, what's not to like!? That said, I often find 
 myself a bit lost with all the enum cases, specifically in the Reducer's body. And while we can 
-always split reducers up, sometimes there isn't a clean way of divvying up its responsibilities evenly.
+always split reducers up, sometimes there isn't a clean way of divvying up its responsibilities 
+in a way that alleviates the problem.
 
-But what is it? Is it the extra indentation? I don't know. To get to the bottom of this, we need to play 
-around with some ideas...For example, what if we could _hide_ the Reduce's switch statement while retaining 
-all the pieces and concepts of TCA?
+What's causing this sense of disorientation? Is it the extra indentation? Is it the way each case 
+is separated from one another? (Is it just me?) I don't know. To get to the bottom of this, we need 
+to play around with some ideas! 
 
-This `ReduceDispatcher` project explores how it feels to replace switch cases with function calls.
+The `ReduceDispatcher` project explores one such idea: what if we could _hide_ the Reduce's switch 
+statement while retaining all the pieces and concepts of TCA? Would it _feel_ better if we replaced 
+all enum cases in a Reducer's body with function calls?
+
+Well, let's find out!
 
 ## Usage
 
