@@ -21,4 +21,8 @@ struct MacroUtilities {
         declaration.inheritanceClause?.inheritedTypes.contains { $0.type.trimmedDescription == "Reducer" } == true
             || declaration.attributes.contains { $0.as(AttributeSyntax.self)?.attributeName.trimmedDescription == "Reducer" } == true
     }
+    
+    static func shouldSkipEnumCase(_ enumCaseDeclaration: EnumCaseDeclSyntax) -> Bool {
+        enumCaseDeclaration.attributes.contains(where: { $0.trimmedDescription == "@SkipDispatch" })
+    }
 }

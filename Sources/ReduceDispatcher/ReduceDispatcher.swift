@@ -8,3 +8,9 @@ public macro ReduceDispatcher() = #externalMacro(
     module: "ReduceDispatcherImplementation",
     type: "ReduceDispatcherMacro"
 )
+
+@attached(peer)
+public macro SkipDispatch() = #externalMacro(
+    module: "ReduceDispatcherImplementation",
+    type: "SkipDispatchMacro"
+)

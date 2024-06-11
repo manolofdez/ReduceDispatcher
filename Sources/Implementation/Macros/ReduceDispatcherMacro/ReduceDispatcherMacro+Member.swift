@@ -18,54 +18,57 @@ extension ReduceDispatcherMacro: MemberMacro {
         
         guard let actionDeclaration = MacroUtilities.findActionDeclaration(in: members) else { return [] }
         
-        let cases: [String]
-        do {
-            cases = try actionDeclaration.memberBlock.members.compactMap { try extractCase(from: $0) }
-        } catch {
-            return []
-        }
-        
+        let cases = actionDeclaration.memberBlock.members.compactMap { extractCase(from: $0) }
         let casesString = cases.joined()
-        let switchString = """
-                           switch action {
-                           \(casesString)
-                           }
-                           """
+        let switchString = 
+            """
+            switch action {
+            \(casesString)
+            }
+            """
 
         let actionDelegateType = "\(declaration.name.text)ActionDelegate"
         let result: String =
-        """
-        private struct Dispatch: Reducer {
-            private let actionDelegate: \(actionDelegateType)
-            
-            init(_ actionDelegate: \(actionDelegateType)) {
-                self.actionDelegate = actionDelegate
+            """
+            private struct Dispatch: Reducer {
+                private let actionDelegate: \(actionDelegateType)
+                
+                init(_ actionDelegate: \(actionDelegateType)) {
+                    self.actionDelegate = actionDelegate
+                }
+                
+                func reduce(into state: inout State, action: Action) -> Effect<Action> {
+                    \(cases.count > 0 ? switchString : ".none")
+                }
             }
-            
-            func reduce(into state: inout State, action: Action) -> Effect<Action> {
-                \(casesString.count > 0 ? switchString : ".none")
-            }
-        }
-        """
+            """
         
         return [DeclSyntax(stringLiteral: result)]
     }
     
-    private static func extractCase(from enumMember: MemberBlockItemListSyntax.Element) throws -> String? {
-        guard let enumCase = enumMember.decl.as(EnumCaseDeclSyntax.self)?.elements.first else { return nil }
+    private static func extractCase(from enumMember: MemberBlockItemListSyntax.Element) -> String? {
+        guard let enumCaseDeclaration = enumMember.decl.as(EnumCaseDeclSyntax.self),
+              let enumCaseElement = enumCaseDeclaration.elements.first else {
+            return nil
+        }
         
-        let parameterNames = enumCase.parameterClause?.parameters.enumerated().compactMap { index, enumCaseParameter in
+        let enumCaseName = enumCaseElement.name.text
+        
+        guard !MacroUtilities.shouldSkipEnumCase(enumCaseDeclaration) else {
+            return "case .\(enumCaseName):  return .none"
+        }
+        
+        let parameterNames = enumCaseElement.parameterClause?.parameters.enumerated().compactMap { index, enumCaseParameter in
             MacroUtilities.extractName(from: enumCaseParameter, at: index)
         } ?? []
         
-        let enumCaseName = enumCase.name.text
         let functionName = "actionDelegate.\(enumCaseName)"
         
         guard parameterNames.count > 0 else {
             return "case .\(enumCaseName):  return \(functionName)(state: &state)"
         }
         
-        var functionParameters: [String] = enumCase.parameterClause?.parameters.enumerated().compactMap { index, enumCaseParameter in
+        var functionParameters: [String] = enumCaseElement.parameterClause?.parameters.enumerated().compactMap { index, enumCaseParameter in
             let parameterName = MacroUtilities.extractName(from: enumCaseParameter, at: index)
             return enumCaseParameter.firstName == nil || enumCaseParameter.secondName != nil
                 ? parameterName 
@@ -74,7 +77,7 @@ extension ReduceDispatcherMacro: MemberMacro {
         functionParameters.append("state: &state")
         
         return """
-               case let .\(enumCase.name.text)(\(parameterNames.joined(separator: ", "))):
+               case let .\(enumCaseElement.name.text)(\(parameterNames.joined(separator: ", "))):
                return \(functionName)(\(functionParameters.joined(separator: ", ")))
                """
     }

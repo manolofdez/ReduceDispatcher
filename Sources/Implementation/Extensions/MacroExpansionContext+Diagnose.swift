@@ -8,7 +8,7 @@ extension MacroExpansionContext {
         diagnose(DiagnosticUtilities.diagnostic(for: error, in: node))
     }
     
-    func diagnose(error: ReduceDispatcherMacro.Error, in node: some SyntaxProtocol) {
+    func diagnose(error: ExpansionError, in node: some SyntaxProtocol) {
         diagnose(DiagnosticUtilities.diagnostic(for: error, in: node))
     }
 }
