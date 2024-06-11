@@ -37,7 +37,7 @@ extension ReduceDispatcherMacro: PeerMacro {
             return []
         }
         
-        let actionNestedTypes = extractNestedType(from: actionDeclaration.memberBlock.members)
+        let actionNestedTypes = extractNestedTypes(from: actionDeclaration.memberBlock.members)
         let functions = actionDeclaration.memberBlock.members.compactMap {
             extractFunctionSignature(from: $0, nestedTypes: actionNestedTypes)
         }
@@ -69,14 +69,37 @@ extension ReduceDispatcherMacro: PeerMacro {
     ) -> String {
         let parameterName = MacroUtilities.extractName(from: enumCaseParameter, at: indexInParent)
         let parameterPrefix = enumCaseParameter.firstName == nil || enumCaseParameter.secondName != nil ? "_ " : ""
-        let parameterType = nestedTypes.contains(enumCaseParameter.type.trimmedDescription)
-            ? "Action.\(enumCaseParameter.type.trimmedDescription)"
-            : enumCaseParameter.type.trimmedDescription
+        let parameterType = extractType(from: enumCaseParameter.type, nestedTypes: nestedTypes)
         
         return "\(parameterPrefix)\(parameterName): \(parameterType)"
     }
     
-    private static func extractNestedType(from members: MemberBlockItemListSyntax) -> [String] {
+    private static func extractType(from type: TypeSyntax, nestedTypes: [String]) -> String {
+        let namespacedName: (String) -> String = {
+            nestedTypes.contains($0) ? "Action.\($0)" : $0
+        }
+        
+        guard let identifierType = type.as(IdentifierTypeSyntax.self),
+              let genericArgument = identifierType.genericArgumentClause else {
+            return namespacedName(type.trimmedDescription)
+        }
+        
+        var result = "\(identifierType.name.text)<"
+
+        genericArgument.arguments.forEach {
+            result += extractType(from: $0.argument, nestedTypes: nestedTypes)
+            
+            if $0.trailingComma != nil {
+                result += ", "
+            }
+        }
+        
+        result += ">"
+        
+        return result
+    }
+    
+    private static func extractNestedTypes(from members: MemberBlockItemListSyntax) -> [String] {
         var nestedTypes: [String] = []
         var evaluationList = [(parentType: String?.none, members: members)]
         var evaluationListIndex = 0
