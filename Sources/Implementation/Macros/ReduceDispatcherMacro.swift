@@ -8,6 +8,5 @@ public enum ReduceDispatcherMacro {
         case invalidRootNodeType
         case reducerConformanceNotFound
         case nestedActionRequired
-        case unsupportedParameter(node: Syntax)
     }
 }

@@ -53,8 +53,8 @@ extension ReduceDispatcherMacro: PeerMacro {
     private static func extractFunctionSignature(from enumMember: MemberBlockItemListSyntax.Element) throws -> String? {
         guard let enumCase = enumMember.decl.as(EnumCaseDeclSyntax.self)?.elements.first else { return nil }
         
-        var parameters = try enumCase.parameterClause?.parameters.compactMap { enumCaseParameter in
-            try extractParameter(from: enumCaseParameter)
+        var parameters = try enumCase.parameterClause?.parameters.enumerated().compactMap { index, enumCaseParameter in
+            try extractParameter(from: enumCaseParameter, at: index)
         } ?? []
         parameters.append("state: inout State")
         
@@ -62,9 +62,12 @@ extension ReduceDispatcherMacro: PeerMacro {
         return "func \(functionName)(\(parameters.joined(separator: ", "))) -> Effect<Action>"
     }
     
-    private static func extractParameter(from enumCaseParameter: EnumCaseParameterListSyntax.Element) throws -> String {
-        let parameterName = try MacroUtilities.extractName(from: enumCaseParameter)
-        let parameterPrefix = enumCaseParameter.firstName == nil ? "_ " : ""
+    private static func extractParameter(
+        from enumCaseParameter: EnumCaseParameterListSyntax.Element,
+        at indexInParent: Int
+    ) throws -> String {
+        let parameterName = MacroUtilities.extractName(from: enumCaseParameter, at: indexInParent)
+        let parameterPrefix = enumCaseParameter.firstName == nil || enumCaseParameter.secondName != nil ? "_ " : ""
         
         return "\(parameterPrefix)\(parameterName): \(enumCaseParameter.type.trimmedDescription)"
     }

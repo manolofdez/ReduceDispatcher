@@ -10,24 +10,11 @@ struct MacroUtilities {
             .first { $0.name.text == "Action" }
     }
     
-    
-    static func extractVariableNameFromType(_ type: TypeSyntax) -> String? {
-        type.as(MemberTypeSyntax.self)?.name.text
-            ?? type.as(IdentifierTypeSyntax.self)?.name.text
-    }
-    
-    static func extractName(from enumCaseParameter: EnumCaseParameterListSyntax.Element) throws -> String {
-        let parameterName: String
-        
-        if let firstName = enumCaseParameter.firstName?.text {
-            parameterName = firstName
-        } else if let typeName: String = MacroUtilities.extractVariableNameFromType(enumCaseParameter.type) {
-            parameterName = "\(typeName.lowercasingFirst())"
-        } else {
-            throw ReduceDispatcherMacro.Error.unsupportedParameter(node: Syntax(enumCaseParameter))
-        }
-        
-        return parameterName
+    static func extractName(
+        from enumCaseParameter: EnumCaseParameterListSyntax.Element,
+        at indexInParent: Int
+    ) -> String {
+        enumCaseParameter.secondName?.text ?? enumCaseParameter.firstName?.text ?? "value\(indexInParent)"
     }
     
     static func conformsToReducer(declaration: StructDeclSyntax) -> Bool {

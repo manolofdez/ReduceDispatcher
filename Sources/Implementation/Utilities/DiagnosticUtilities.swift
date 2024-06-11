@@ -33,11 +33,6 @@ struct DiagnosticUtilities {
                 node: node,
                 message: MacroExpansionErrorMessage("ReduceDispatcher requires the Action enum be nested inside the Reducer")
             )
-        case let .unsupportedParameter(parameterNode):
-            return Diagnostic(
-                node: parameterNode,
-                message: MacroExpansionErrorMessage("An error ocurred determining the function signature for this case")
-            )
         }
     }
     

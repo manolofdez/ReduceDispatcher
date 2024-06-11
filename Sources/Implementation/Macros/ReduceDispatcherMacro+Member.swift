@@ -54,8 +54,8 @@ extension ReduceDispatcherMacro: MemberMacro {
     private static func extractCase(from enumMember: MemberBlockItemListSyntax.Element) throws -> String? {
         guard let enumCase = enumMember.decl.as(EnumCaseDeclSyntax.self)?.elements.first else { return nil }
         
-        let parameterNames = try enumCase.parameterClause?.parameters.compactMap { enumCaseParameter in
-            try MacroUtilities.extractName(from: enumCaseParameter)
+        let parameterNames = enumCase.parameterClause?.parameters.enumerated().compactMap { index, enumCaseParameter in
+            MacroUtilities.extractName(from: enumCaseParameter, at: index)
         } ?? []
         
         let enumCaseName = enumCase.name.text
@@ -65,9 +65,11 @@ extension ReduceDispatcherMacro: MemberMacro {
             return "case .\(enumCaseName):  return \(functionName)(state: &state)"
         }
         
-        var functionParameters: [String] = try enumCase.parameterClause?.parameters.compactMap { enumCaseParameter in
-            let parameterName = try MacroUtilities.extractName(from: enumCaseParameter)
-            return enumCaseParameter.firstName == nil ? parameterName : "\(parameterName): \(parameterName)"
+        var functionParameters: [String] = enumCase.parameterClause?.parameters.enumerated().compactMap { index, enumCaseParameter in
+            let parameterName = MacroUtilities.extractName(from: enumCaseParameter, at: index)
+            return enumCaseParameter.firstName == nil || enumCaseParameter.secondName != nil
+                ? parameterName 
+                : "\(parameterName): \(parameterName)"
         } ?? []
         functionParameters.append("state: &state")
         
