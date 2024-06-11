@@ -37,12 +37,9 @@ extension ReduceDispatcherMacro: PeerMacro {
             return []
         }
         
-        let functions: [String]
-        do {
-            functions = try actionDeclaration.memberBlock.members.compactMap { try extractFunctionSignature(from: $0) }
-        } catch {
-            context.diagnose(error: error, in: actionDeclaration.memberBlock)
-            return []
+        let actionNestedTypes = extractNestedType(from: actionDeclaration.memberBlock.members)
+        let functions = actionDeclaration.memberBlock.members.compactMap {
+            extractFunctionSignature(from: $0, nestedTypes: actionNestedTypes)
         }
         
         let visibility = protocolVisibility(for: declaration)
@@ -50,11 +47,14 @@ extension ReduceDispatcherMacro: PeerMacro {
         return [protocolDeclaration(name: name, visibility: visibilityString, functions: functions)]
     }
     
-    private static func extractFunctionSignature(from enumMember: MemberBlockItemListSyntax.Element) throws -> String? {
+    private static func extractFunctionSignature(
+        from enumMember: MemberBlockItemListSyntax.Element,
+        nestedTypes: [String]
+    ) -> String? {
         guard let enumCase = enumMember.decl.as(EnumCaseDeclSyntax.self)?.elements.first else { return nil }
         
-        var parameters = try enumCase.parameterClause?.parameters.enumerated().compactMap { index, enumCaseParameter in
-            try extractParameter(from: enumCaseParameter, at: index)
+        var parameters = enumCase.parameterClause?.parameters.enumerated().compactMap { index, enumCaseParameter in
+            extractParameter(from: enumCaseParameter, at: index, nestedTypes: nestedTypes)
         } ?? []
         parameters.append("state: inout State")
         
@@ -64,12 +64,63 @@ extension ReduceDispatcherMacro: PeerMacro {
     
     private static func extractParameter(
         from enumCaseParameter: EnumCaseParameterListSyntax.Element,
-        at indexInParent: Int
-    ) throws -> String {
+        at indexInParent: Int,
+        nestedTypes: [String]
+    ) -> String {
         let parameterName = MacroUtilities.extractName(from: enumCaseParameter, at: indexInParent)
         let parameterPrefix = enumCaseParameter.firstName == nil || enumCaseParameter.secondName != nil ? "_ " : ""
+        let parameterType = nestedTypes.contains(enumCaseParameter.type.trimmedDescription)
+            ? "Action.\(enumCaseParameter.type.trimmedDescription)"
+            : enumCaseParameter.type.trimmedDescription
         
-        return "\(parameterPrefix)\(parameterName): \(enumCaseParameter.type.trimmedDescription)"
+        return "\(parameterPrefix)\(parameterName): \(parameterType)"
+    }
+    
+    private static func extractNestedType(from members: MemberBlockItemListSyntax) -> [String] {
+        var nestedTypes: [String] = []
+        var evaluationList = [(parentType: String?.none, members: members)]
+        var evaluationListIndex = 0
+        
+        while (evaluationListIndex < evaluationList.count) {
+            let (parentType, members) = evaluationList[evaluationListIndex]
+            
+            members.forEach { member in
+                let typeName: String
+                let members: MemberBlockItemListSyntax
+                
+                if let declaration = member.decl.as(EnumDeclSyntax.self) {
+                    typeName = declaration.name.text
+                    members = declaration.memberBlock.members
+                } else if let declaration = member.decl.as(StructDeclSyntax.self) {
+                    typeName = declaration.name.text
+                    members = declaration.memberBlock.members
+                } else if let declaration = member.decl.as(ClassDeclSyntax.self) {
+                    typeName = declaration.name.text
+                    members = declaration.memberBlock.members
+                } else if let declaration = member.decl.as(ActorDeclSyntax.self) {
+                    typeName = declaration.name.text
+                    members = declaration.memberBlock.members
+                } else {
+                    return
+                }
+                
+                let typePrefix: String
+                if let parentType = parentType {
+                    typePrefix = "\(parentType)."
+                } else {
+                    typePrefix = ""
+                }
+                
+                let nestedType = "\(typePrefix)\(typeName)"
+                
+                nestedTypes.append(nestedType)
+                evaluationList.append((parentType: nestedType, members: members))
+            }
+            
+            evaluationListIndex += 1
+        }
+        
+        return nestedTypes
     }
     
     private static func protocolDeclaration(name: String, visibility: String, functions: [String]) -> DeclSyntax {
