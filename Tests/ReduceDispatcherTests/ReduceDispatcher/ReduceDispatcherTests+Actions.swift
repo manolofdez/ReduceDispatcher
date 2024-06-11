@@ -642,4 +642,61 @@ extension ParentReducerTests {
             """
         }
     }
+    
+    func testMacro_whenActionGenericNestedAssociatedType_addsDispatchCorrectly() throws {
+        assertMacro {
+            """
+            @ReduceDispatcher
+            struct ParentReducer: Reducer {
+                struct State {}
+                
+                enum Action {
+                    enum Alert {
+                        case didTapContinue
+                    }
+                    case alert(PresentationAction<Alert, State, Presentation<Alert>>)
+                }
+                
+                var body: some ReducerOf<Self> {}
+            }
+            """
+        } expansion: {
+            """
+            struct ParentReducer: Reducer {
+                struct State {}
+                
+                enum Action {
+                    enum Alert {
+                        case didTapContinue
+                    }
+                    case alert(PresentationAction<Alert, State, Presentation<Alert>>)
+                }
+                
+                var body: some ReducerOf<Self> {}
+
+                private struct Dispatch: Reducer {
+                    private let actionDelegate: ParentReducerActionDelegate
+
+                    init(_ actionDelegate: ParentReducerActionDelegate) {
+                        self.actionDelegate = actionDelegate
+                    }
+
+                    func reduce(into state: inout State, action: Action) -> Effect<Action> {
+                        switch action {
+                        case let .alert(value0):
+                            return actionDelegate.alert(value0, state: &state)
+                        }
+                    }
+                }
+            }
+
+            protocol ParentReducerActionDelegate {
+                typealias State = ParentReducer.State
+                typealias Action = ParentReducer.Action
+
+                func alert(_ value0: PresentationAction<Action.Alert, State, Presentation<Action.Alert>>, state: inout State) -> Effect<Action>
+            }
+            """
+        }
+    }
 }
