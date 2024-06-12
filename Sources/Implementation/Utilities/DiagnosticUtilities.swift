@@ -6,7 +6,7 @@ import SwiftSyntaxMacroExpansion
 
 struct DiagnosticUtilities {
     static func diagnostic(for error: Error, in node: some SyntaxProtocol) -> Diagnostic {
-        if let error = error as? ReduceDispatcherMacro.Error {
+        if let error = error as? ExpansionError {
             return diagnostic(for: error, in: node)
         } else {
             return Diagnostic(
@@ -16,7 +16,7 @@ struct DiagnosticUtilities {
         }
     }
     
-    static func diagnostic(for error: ReduceDispatcherMacro.Error, in node: some SyntaxProtocol) -> Diagnostic {
+    static func diagnostic(for error: ExpansionError, in node: some SyntaxProtocol) -> Diagnostic {
         switch error {
         case .invalidRootNodeType:
             return Diagnostic(
@@ -32,6 +32,11 @@ struct DiagnosticUtilities {
             return Diagnostic(
                 node: node,
                 message: MacroExpansionErrorMessage("ReduceDispatcher requires the Action enum be nested inside the Reducer")
+            )
+        case .incorrectAttributeUsage:
+            return Diagnostic(
+                node: node,
+                message: MacroExpansionErrorMessage("SkipDispatch can only be used in enum case")
             )
         }
     }

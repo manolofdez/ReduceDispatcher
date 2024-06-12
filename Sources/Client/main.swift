@@ -13,6 +13,7 @@ struct ParentReducer {
         case updateText(String, animated: Bool)
         case child(ChildReducer.Action)
         case didAppear
+        @SkipDispatch
         case enterBackground
     }
     
@@ -29,10 +30,6 @@ extension ParentReducer: ParentReducerActionDelegate {
     }
     
     func didAppear(state: inout State) -> Effect<Action> {
-        .none
-    }
-    
-    func enterBackground(state: inout State) -> Effect<Action> {
         .none
     }
     

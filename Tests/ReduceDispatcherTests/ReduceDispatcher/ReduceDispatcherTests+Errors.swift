@@ -5,7 +5,7 @@ import SwiftSyntaxMacrosTestSupport
 import XCTest
 import MacroTesting
 
-extension ParentReducerTests {
+extension ReduceDispatcherTests {
     
     // MARK: Peer
     

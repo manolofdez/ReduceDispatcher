@@ -7,5 +7,6 @@ import SwiftSyntaxMacros
 struct ReduceDispatcherPlugin: CompilerPlugin {
     let providingMacros: [Macro.Type] = [
         ReduceDispatcherMacro.self,
+        SkipDispatchMacro.self
     ]
 }

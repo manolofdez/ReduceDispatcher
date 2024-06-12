@@ -82,6 +82,33 @@ extension MyReducer: MyReducerActionDelegate {
 
 That's it!
 
+### Dispatch skipping
+
+Sometimes you're scoping a bunch of child reducers, or are treating some actions as events. Having to 
+write out a function for those just to return `.none` feels so bad, right? We gotchu! Just use the 
+`@SkipDispatch` macro. Like so:
+
+```swift
+import ReduceDispatcher
+
+@Reducer
+@ReduceDispatcher
+struct MyReducer {
+    
+    struct State {}
+    
+    enum Action {
+        case didAppear
+        @SkipDispatch
+        case didDisappear
+    }
+    
+    var body: some ReducerOf<Self> {
+        Dispatch(self)
+    }
+}
+```
+
 ## Installation
 
 ### Swift Package Manager

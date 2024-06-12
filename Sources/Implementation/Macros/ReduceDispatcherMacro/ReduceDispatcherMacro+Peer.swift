@@ -51,14 +51,21 @@ extension ReduceDispatcherMacro: PeerMacro {
         from enumMember: MemberBlockItemListSyntax.Element,
         nestedTypes: [String]
     ) -> String? {
-        guard let enumCase = enumMember.decl.as(EnumCaseDeclSyntax.self)?.elements.first else { return nil }
+        guard let enumCaseDeclaration = enumMember.decl.as(EnumCaseDeclSyntax.self),
+              let enumCaseElement = enumCaseDeclaration.elements.first else {
+            return nil
+        }
         
-        var parameters = enumCase.parameterClause?.parameters.enumerated().compactMap { index, enumCaseParameter in
+        guard !MacroUtilities.shouldSkipEnumCase(enumCaseDeclaration) else {
+            return nil
+        }
+        
+        var parameters = enumCaseElement.parameterClause?.parameters.enumerated().compactMap { index, enumCaseParameter in
             extractParameter(from: enumCaseParameter, at: index, nestedTypes: nestedTypes)
         } ?? []
         parameters.append("state: inout State")
         
-        let functionName = enumCase.name.text
+        let functionName = enumCaseElement.name.text
         return "func \(functionName)(\(parameters.joined(separator: ", "))) -> Effect<Action>"
     }
     
