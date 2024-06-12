@@ -34,6 +34,8 @@ final class SkipDispatchTests: XCTestCase {
                     case child(ChildReducer.Action)
                     @SkipDispatch
                     case didAppear
+                    @SkipDispatch
+                    case didDisappear
                 }
                 
                 var body: some ReducerOf<Self> {}
@@ -47,6 +49,7 @@ final class SkipDispatchTests: XCTestCase {
                 enum Action {
                     case child(ChildReducer.Action)
                     case didAppear
+                    case didDisappear
                 }
                 
                 var body: some ReducerOf<Self> {}
@@ -63,6 +66,8 @@ final class SkipDispatchTests: XCTestCase {
                         case let .child(value0):
                             return actionDelegate.child(value0, state: &state)
                         case .didAppear:
+                            return .none
+                        case .didDisappear:
                             return .none
                         }
                     }

@@ -55,8 +55,8 @@ extension ReduceDispatcherMacro: MemberMacro {
         let enumCaseName = enumCaseElement.name.text
         
         guard !MacroUtilities.shouldSkipEnumCase(enumCaseDeclaration) else {
-            return "case .\(enumCaseName):  return .none"
-        }
+            return "case .\(enumCaseName):  return .none "
+        }   
         
         let parameterNames = enumCaseElement.parameterClause?.parameters.enumerated().compactMap { index, enumCaseParameter in
             MacroUtilities.extractName(from: enumCaseParameter, at: index)
@@ -65,7 +65,10 @@ extension ReduceDispatcherMacro: MemberMacro {
         let functionName = "actionDelegate.\(enumCaseName)"
         
         guard parameterNames.count > 0 else {
-            return "case .\(enumCaseName):  return \(functionName)(state: &state)"
+            return """
+                   case .\(enumCaseName):
+                   return \(functionName)(state: &state)
+                   """
         }
         
         var functionParameters: [String] = enumCaseElement.parameterClause?.parameters.enumerated().compactMap { index, enumCaseParameter in
