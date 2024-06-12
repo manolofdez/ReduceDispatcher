@@ -84,8 +84,9 @@ That's it!
 
 ### Dispatch skipping
 
-Sometimes you're scoping a bunch of reducer or are treating some actions as events. Having to implement 
-a function for those feels so bad, right? We gotchu! Just use the `@SkipDispatch` macro like so:
+Sometimes you're scoping a bunch of child reducers, or are treating some actions as events. Having to 
+write out a function for those just to return `.none` feels so bad, right? We gotchu! Just use the 
+`@SkipDispatch` macro. Like so:
 
 ```swift
 import ReduceDispatcher
